@@ -12,7 +12,7 @@ import PinFilterSelectionCard from './pin_filter_selection_card';
 
 const FluidMapProfile = props => {
   return (
-    <div style={{position: 'relative', width: '100%'}}>
+    <div style={{position: 'relative', width: '100%', height: '100vh'}}>
       <div
         style={{
           position: 'absolute',
