@@ -194,8 +194,8 @@ class CurrentUserProfile extends Component {
           this.setState({
             placesToGo: updatedPlacesToGo,
             mapCenter: {
-              lat: placeToGo.location.lat,
-              lng: placeToGo.location.lng,
+              lat: placeToDelete.location.lat,
+              lng: placeToDelete.location.lng,
             }
           })
         })
@@ -365,6 +365,7 @@ class CurrentUserProfile extends Component {
          handleTextChange={this.handleTextChange}
          handleAddLocationToDB={this.handleAddLocationToDB}
          handlePinLabelSelect={this.handlePinLabelSelect}
+         pinLabel={this.state.pinLabel}
          addPinModalOpen={this.state.addPinModalOpen}
          setAddPinModalOpen={this.setAddPinModalOpen}
          handleMonthSelect={this.handleMonthSelect}

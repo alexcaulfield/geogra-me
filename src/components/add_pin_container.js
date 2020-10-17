@@ -256,7 +256,7 @@ const AddPinContainer = props => {
               />
             </div>
             <div style={{ display: 'inline-flex'}}>
-              <Button onClick={props.handleAddLocationToDB}>
+              <Button onClick={props.handleAddLocationToDB} disabled={!(props.pinLabel && props.locationToAdd)}>
                 Add <Icon name='map marker' />
               </Button>
             </div>

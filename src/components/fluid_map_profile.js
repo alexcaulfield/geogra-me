@@ -89,6 +89,7 @@ const FluidMapProfile = props => {
           handleYearSelect={props.handleYearSelect}
           handleSetComment={props.handleSetComment}
           displayDateVisited={props.displayDateVisited}
+          pinLabel={props.pinLabel}
         />
       )}
     </div>
