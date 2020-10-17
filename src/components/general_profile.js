@@ -3,13 +3,10 @@ import {db} from './../fire-config'
 import { USERS_COLLECTION } from './../utils'
 import ErrorMessage from "./error_message";
 import {Link, withRouter} from "react-router-dom";
-import {GOOGLE_MAP_URL} from './../utils';
-import Header from "./header";
 import LoadingPage from "./loading_page";
-import MyMapComponent from "./map_component";
-import TravelStatsCard from './travel_stats_card';
-import {Button, Container, Grid, Icon} from 'semantic-ui-react';
+import {Button, Icon} from 'semantic-ui-react';
 import BasicHeader from "./basic_header";
+import FluidMapProfile from './fluid_map_profile';
 
 class GeneralProfile extends Component {
   state = {
@@ -25,6 +22,7 @@ class GeneralProfile extends Component {
       lat: 42.3601,
       lng: -71.0589
     },
+    pinFilters: [],
   };
 
   componentDidMount() {
@@ -73,6 +71,47 @@ class GeneralProfile extends Component {
         })
       });
   };
+
+  setPinFilters = (e, checkbox) => {
+    if (checkbox.checked) {
+      this.setState(prevState => {
+        return {
+          pinFilters: [...prevState.pinFilters, checkbox.label]
+        }
+      })
+    } else {
+      this.setState(prevState => {
+        return {
+          pinFilters: prevState.pinFilters.filter(pinFilter => pinFilter !== checkbox.label)
+        }
+      })
+    }
+  }
+
+  filterPlaces = () => {
+    // display legacy pin objects without labels
+    const placesBeen = this.state.placesBeen.map(place => {
+      if (place.label) {
+        return place;
+      } else {
+        return {...place, label: 'Been To'}
+      }
+    })
+    const placesToGo = this.state.placesToGo.map(place => {
+      if (place.label) {
+        return place;
+      } else {
+        return {...place, label: 'Want To Go'}
+      }
+    })   // display all pins if no filters are selected
+    if (this.state.pinFilters.length === 0) {
+      return [...placesBeen, ...placesToGo]
+    }
+    // otherwise filter all pins
+    const filteredPlacesBeen = placesBeen.filter(place => this.state.pinFilters.includes(place.label))
+    const filteredPlacesToGo = placesToGo.filter(place => this.state.pinFilters.includes(place.label))
+    return [...filteredPlacesBeen, ...filteredPlacesToGo]
+  }
 
   renderPageComponent = () => {
     if (Object.keys(this.props.currentUser).length === 0) {
@@ -128,38 +167,25 @@ class GeneralProfile extends Component {
       );
     } else if (this.state.publicProfile) {
       return (
-        <Grid>
-          <Grid.Row>
-            <Container>
-              <Header
-                name={this.props.currentUser.displayName}
-                photoSrc={this.props.currentUser.photoURL}
-                profileName={this.state.profileName}
-                handleLogoutClick={this.props.handleLogoutClick}
-                shouldRenderMyMap={false}
-              />
-            </Container>
-          </Grid.Row>
-          <Grid.Row>
-            <MyMapComponent
-              isMarkerShown
-              googleMapURL={GOOGLE_MAP_URL}
-              loadingElement={<div style={{ height: `100%`, width: `100%` }} />}
-              containerElement={<div style={{ height: `60vh`, width: `100vw`, marginLeft: `calc(-50vw + 50%)`, paddingTop: `1px` }} />}
-              mapElement={<div style={{ height: `100%`, width: `100%` }} />}
-              listOfCities={this.state.placesBeen}
-              shouldRenderPlacesBeen
-              mapCenter={this.state.mapCenter}
-              shouldRenderUpdateButtons={false}
-            />
-          </Grid.Row>
-          <Grid.Row centered>
-            <TravelStatsCard
-              name={`${this.state.profileName}'s`}
-              countriesBeen={this.state.countriesBeen}
-            />
-          </Grid.Row>
-        </Grid>
+        <FluidMapProfile
+          profileName={this.state.profileName}
+          username={this.props.currentUser.email}
+          handleLogoutClick={this.props.handleLogoutClick}
+          publicProfile={this.state.publicProfile}
+          onClickUpdateProfilePrivacy={this.handleUpdateProfilePrivacy}
+          userProfileLink={this.state.userProfileLink}
+          shouldRenderMyMap={false}
+          listOfCities={this.filterPlaces()}
+          shouldRenderPlacesBeen={this.state.shouldRenderPlacesBeen}
+          shouldRenderPlacesToGo={this.state.shouldRenderPlacesToGo}
+          deletePlace={this.deletePlace}
+          moveToPlacesBeen={this.moveToPlacesBeen}
+          mapCenter={this.state.mapCenter}
+          countriesBeen={this.state.countriesBeen}
+          shouldRenderUpdateButtons={false}
+          setPinFilters={this.setPinFilters}
+          pinFilters={this.state.pinFilters}
+        />
       )
     }
   };

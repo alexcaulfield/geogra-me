@@ -2,11 +2,10 @@ import React from 'react';
 import {
   Dropdown,
   Button,
-  Responsive,
 } from 'semantic-ui-react';
 import {useHistory} from "react-router-dom";
 
-const settingsButton = <Button circular icon='setting' />;
+const settingsButton = <Button circular icon='setting' size='huge' color='blue'/>;
 
 const copyToClipboard = (userProfileLink) => {
   navigator.clipboard.writeText(userProfileLink)
@@ -41,27 +40,25 @@ const SettingsDropdown = ({
               onClick={copyToClipboard(userProfileLink)}
             />
             <Dropdown.Item
-              text='Make Profile Public'
-              icon='lock open'
-              active={publicProfile}
+              text={!publicProfile ? 'Make Profile Public' : 'Make Profile Private'}
+              icon={!publicProfile ? 'lock open' : 'lock'}
               onClick={onClickUpdateProfilePrivacy}
-            />
-            <Dropdown.Item
-            text='Make Profile Private'
-            icon='lock'
-            active={!publicProfile}
-            onClick={onClickUpdateProfilePrivacy}
             />
           </>
         )}
         {!renderPersonalProfileSettings && (
-          <Responsive maxWidth={768}>
+          <>
+            <Dropdown.Item
+              text={username}
+              icon='user outline'
+              onClick={copyToClipboard(userProfileLink)}
+            />
             <Dropdown.Item
               text='My Profile'
               icon='user outline'
               onClick={() => history.push('/profile')}
             />
-          </Responsive>
+          </>
         )}
         <Dropdown.Item
           text='Log Out'

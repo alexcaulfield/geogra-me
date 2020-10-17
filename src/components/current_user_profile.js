@@ -1,12 +1,9 @@
 import React, {Component} from 'react';
-import MyMapComponent from './map_component';
-import Header from './header';
 import {db} from './../fire-config'
-import { USERS_COLLECTION, GOOGLE_MAP_URL, SITE_URL } from './../utils'
+import { USERS_COLLECTION, SITE_URL } from './../utils'
 import {geocodeByAddress, getLatLng} from 'react-places-autocomplete'
 import * as firebase from 'firebase'
-import InteractiveMapSection from "./interactive_map_section";
-import {Grid, Container} from 'semantic-ui-react';
+import FluidMapProfile from './fluid_map_profile';
 
 class CurrentUserProfile extends Component {
   state = {
@@ -28,6 +25,13 @@ class CurrentUserProfile extends Component {
       lat: 42.3601,
       lng: -71.0589
     },
+    pinLabel: '',
+    addPinModalOpen: false,
+    monthVisited: '',
+    yearVisited: null,
+    pinComment: '',
+    displayDateVisited: false,
+    pinFilters: [],
   };
 
   componentDidMount() {
@@ -44,6 +48,11 @@ class CurrentUserProfile extends Component {
           countriesBeen: data.countriesBeen.length,
           userProfileLink: `${SITE_URL}/profile/${data.username}`,
           username: data.username,
+          addPinModalOpen: false,
+          pinLabel: '',
+          monthVisited: '',
+          yearVisited: null,
+          pinComment: '',
         })
       } else {
         console.log(`there was an error in fetching data for user ${this.state.userDocIdentifier}`)
@@ -76,6 +85,10 @@ class CurrentUserProfile extends Component {
               },
               placeId: locationObj.place_id,
               country: country,
+              label: this.state.pinLabel,
+              monthVisited: this.state.monthVisited,
+              yearVisited: this.state.yearVisited,
+              comment: this.state.pinComment,
             }),
             countriesBeen: firebase.firestore.FieldValue.arrayUnion(country),
           }
@@ -88,6 +101,10 @@ class CurrentUserProfile extends Component {
                 lng,
               },
               placeId: locationObj.place_id,
+              label: this.state.pinLabel,
+              monthVisited: this.state.monthVisited,
+              yearVisited: this.state.yearVisited,
+              comment: this.state.pinComment,
             })
           }
         }
@@ -173,8 +190,8 @@ class CurrentUserProfile extends Component {
           this.setState({
             placesToGo: updatedPlacesToGo,
             mapCenter: {
-              lat: placeToGo.location.lat,
-              lng: placeToGo.location.lng,
+              lat: placeToDelete.location.lat,
+              lng: placeToDelete.location.lng,
             }
           })
         })
@@ -218,6 +235,7 @@ class CurrentUserProfile extends Component {
     this.setState({
       beenToButtonClicked: true,
       wantToGoButtonClicked: false,
+      displayDateVisited: true,
     })
   };
 
@@ -225,6 +243,7 @@ class CurrentUserProfile extends Component {
     this.setState({
       beenToButtonClicked: false,
       wantToGoButtonClicked: true,
+      displayDateVisited: false,
     })
   }
 
@@ -255,62 +274,119 @@ class CurrentUserProfile extends Component {
     })
   };
 
+  handlePinLabelSelect = (e, dropdown) => {
+    if (dropdown.value === 'Been To' || dropdown.value === 'Lived' || dropdown.value === 'Born') {
+      this.handleBeenToClick();
+    } else {
+      this.handleWantToGoClick();
+    }
+
+    this.setState({
+      pinLabel: dropdown.value,
+    })
+  }
+
+  setAddPinModalOpen = openValue => {
+    this.setState({
+      addPinModalOpen: openValue,
+    })
+  }
+
+  handleMonthSelect = (e, dropdown) => {
+    this.setState({
+      monthVisited: dropdown.value,
+    })
+  }
+
+  handleYearSelect = (e, dropdown) => {
+    this.setState({
+      yearVisited: dropdown.value,
+    })
+  }
+
+  handleSetComment = (e, text) => {
+    this.setState({
+      pinComment: text.value,
+    })
+  }
+
+  setPinFilters = (e, checkbox) => {
+    if (checkbox.checked) {
+      this.setState(prevState => {
+        return {
+          pinFilters: [...prevState.pinFilters, checkbox.label]
+        }
+      })
+    } else {
+      this.setState(prevState => {
+        return {
+          pinFilters: prevState.pinFilters.filter(pinFilter => pinFilter !== checkbox.label)
+        }
+      })
+    }
+  }
+
+  filterPlaces = () => {
+    // display legacy pin objects without labels
+    const placesBeen = this.state.placesBeen.map(place => {
+      if (place.label) {
+        return place;
+      } else {
+        return {...place, label: 'Been To'}
+      }
+    })
+    const placesToGo = this.state.placesToGo.map(place => {
+      if (place.label) {
+        return place;
+      } else {
+        return {...place, label: 'Want To Go'}
+      }
+    })
+    // display all pins if no filters are selected
+    if (this.state.pinFilters.length === 0) {
+      return [...placesBeen, ...placesToGo]
+    }
+    // otherwise filter all pins
+    const filteredPlacesBeen = placesBeen.filter(place => this.state.pinFilters.includes(place.label))
+    const filteredPlacesToGo = placesToGo.filter(place => this.state.pinFilters.includes(place.label))
+    return [...filteredPlacesBeen, ...filteredPlacesToGo]
+  }
   
   render() {
     const { handleLogoutClick, userObject } = this.props;
     return(
-      <Grid>
-        <Grid.Row>
-          <Container>
-            <Header
-              name={userObject.displayName}
-              photoSrc={userObject.photoURL}
-              profileName={userObject.displayName}
-              handleLogoutClick={handleLogoutClick}
-              shouldRenderMyMap
-              publicProfile={this.state.publicProfile}
-              onClickUpdateProfilePrivacy={this.handleUpdateProfilePrivacy}
-              userProfileLink={this.state.userProfileLink}
-              username={this.state.username}
-            />
-          </Container>
-        </Grid.Row>
-        <Grid.Row>
-            <MyMapComponent
-              isMarkerShown
-              googleMapURL={GOOGLE_MAP_URL}
-              loadingElement={<div style={{ height: `100%`, width: `100%` }} />}
-              containerElement={<div style={{ height: `60vh`, width: `100vw`, marginLeft: `calc(-50vw + 50%)`, paddingTop: `1px` }} />}
-              mapElement={<div style={{ height: `100%`, width: `100%` }} />}
-              listOfCities={this.state.shouldRenderPlacesBeen ? this.state.placesBeen : this.state.placesToGo}
-              shouldRenderPlacesBeen={this.state.shouldRenderPlacesBeen}
-              shouldRenderPlacesToGo={this.state.shouldRenderPlacesToGo}
-              deletePlace={this.deletePlace}
-              moveToPlacesBeen={this.moveToPlacesBeen}
-              mapCenter={this.state.mapCenter}
-              shouldRenderUpdateButtons
-            />
-        </Grid.Row>
-        <Grid.Row>
-          <InteractiveMapSection
-            userObject={userObject}
-            countriesBeen={this.state.countriesBeen}
-            locationToAdd={this.state.locationToAdd}
-            handleTextChange={this.handleTextChange}
-            handleInputChange={this.handleInputChange}
-            beenToButtonClicked={this.state.beenToButtonClicked}
-            handleBeenToClick={this.handleBeenToClick}
-            wantToGoButtonClicked={this.state.wantToGoButtonClicked}
-            handleWantToGoClick={this.handleWantToGoClick}
-            handleAddLocationToDB={this.handleAddLocationToDB}
-            shouldRenderPlacesBeen={this.state.shouldRenderPlacesBeen}
-            handleSeePlacesBeen={this.handleSeePlacesBeen}
-            shouldRenderPlacesToGo={this.state.shouldRenderPlacesToGo}
-            handleSeePlacesToGo={this.handleSeePlacesToGo}
-            shouldRenderMyMap
-          />
-        </Grid.Row>
-      </Grid>
+       <FluidMapProfile
+         locationToAdd={this.state.locationToAdd}
+         handleInputChange={this.handleInputChange}
+         handleTextChange={this.handleTextChange}
+         handleAddLocationToDB={this.handleAddLocationToDB}
+         handlePinLabelSelect={this.handlePinLabelSelect}
+         pinLabel={this.state.pinLabel}
+         addPinModalOpen={this.state.addPinModalOpen}
+         setAddPinModalOpen={this.setAddPinModalOpen}
+         handleMonthSelect={this.handleMonthSelect}
+         handleYearSelect={this.handleYearSelect}
+         displayDateVisited={this.state.displayDateVisited}
+         handleSetComment={this.handleSetComment}
+         profilePhotoSrc={userObject.photoURL}
+         profileName={userObject.displayName}
+         handleLogoutClick={handleLogoutClick}
+         publicProfile={this.state.publicProfile}
+         onClickUpdateProfilePrivacy={this.handleUpdateProfilePrivacy}
+         userProfileLink={this.state.userProfileLink}
+         shouldRenderMyMap
+         username={this.state.username}
+         listOfCities={this.filterPlaces()}
+         shouldRenderPlacesBeen={this.state.shouldRenderPlacesBeen}
+         shouldRenderPlacesToGo={this.state.shouldRenderPlacesToGo}
+         deletePlace={this.deletePlace}
+         moveToPlacesBeen={this.moveToPlacesBeen}
+         mapCenter={this.state.mapCenter}
+         countriesBeen={this.state.countriesBeen}
+         shouldRenderUpdateButtons
+         setPinFilters={this.setPinFilters}
+         pinFilters={this.state.pinFilters}
+       />
     )
   }
 }
