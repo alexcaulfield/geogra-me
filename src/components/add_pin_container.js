@@ -219,7 +219,7 @@ const AddPinContainer = props => {
         <div
           style={{
             position: 'absolute',
-            bottom: isMobile ? '75px' : '8px',
+            bottom: isMobile ? '125px' : '8px',
             right: '8px',
             zIndex: 100,
             maxWidth: '25%'
