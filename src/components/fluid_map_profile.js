@@ -9,6 +9,14 @@ import SettingsDropdown from "./settings_dropdown";
 import TravelStatsCard from "./travel_stats_card";
 import AddPinContainer from './add_pin_container';
 import PinFilterSelectionCard from './pin_filter_selection_card';
+import {isMobile} from 'react-device-detect';
+
+export const isNewiPhone = () => {
+  if (typeof window !== 'undefined') {
+    return isMobile && window.innerHeight > 800;
+  }
+  return false;
+}
 
 const FluidMapProfile = props => {
   return (
@@ -65,7 +73,7 @@ const FluidMapProfile = props => {
         style={{
           position: 'absolute',
           left: '8px',
-          bottom: '8px',
+          bottom: isNewiPhone() ? '75px' : '8px',
           width: '40vw',
           zIndex: 100,
         }}
