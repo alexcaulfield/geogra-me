@@ -59,6 +59,9 @@ class AppRouting extends Component {
         docRef.get().then((doc) => {
           if (!doc.exists) {
             // insert into user collection
+            const emailSplit = user.email.split('@');
+            // default to true for RHS students
+            const publicProfile = emailSplit.length > 1 ? emailSplit[1] === 'rpsk12.org' : false;
             docRef.set({
               name: user.displayName,
               email: user.email,
@@ -66,7 +69,7 @@ class AppRouting extends Component {
               placesBeen: [],
               placesToGo: [],
               countriesBeen: [],
-              publicProfile: true,
+              publicProfile: publicProfile,
             })
           }
         }).catch((error) => console.log("Error getting document:", error))

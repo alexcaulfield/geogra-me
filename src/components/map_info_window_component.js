@@ -61,25 +61,42 @@ const InfoWindowCard = ({city, country, deletePlace, cityObj, imgUrl, isPlaceToG
 
 const MapInfoWindowComponent = ({city, deletePlace, shouldRenderPlacesBeen, shouldRenderPlacesToGo, moveToPlacesBeen, shouldRenderUpdateButtons}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [cityName, country] = splitCity(city.name)
-  const [locationImageUrl, setLocationImageUrl] = useState('')
+  const [cityName, country] = splitCity(city.name);
+  const [locationImageUrl, setLocationImageUrl] = useState('');
+
+  const findPlaceImage = (service, placeId) => {
+    service.getDetails({
+      placeId: placeId,
+    }, (place, status) => {
+      if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+        if (place.photos) {
+          setLocationImageUrl(place.photos[0].getUrl())
+        }
+      }
+    })
+  }
 
   const getPlaceData = () => {
-    setIsOpen(true)
-    if (city.placeId) {
-      const map = new window.google.maps.Map(document.getElementById("map"), {
-        center: city.location
-      });
-      const service = new window.google.maps.places.PlacesService(map);
-      service.getDetails({
-        placeId: city.placeId,
-      }, (place, status) => {
+    setIsOpen(true);
+    const map = new window.google.maps.Map(document.getElementById("map"), {
+      center: city.location
+    });
+    const service = new window.google.maps.places.PlacesService(map);
+    let placeId = city.placeId;
+    if (!city.placeId) {
+      const request = {
+        query: cityName,
+        fields: ['name', 'place_id'],
+      };
+      service.findPlaceFromQuery(request, (results, status) => {
         if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-          if (place.photos) {
-            setLocationImageUrl(place.photos[0].getUrl())
-          }
+          placeId = results[0] ? results[0].place_id : '';
+          findPlaceImage(service, placeId);
         }
       })
+    }
+    if (placeId) {
+      findPlaceImage(service, placeId);
     }
   }
 
