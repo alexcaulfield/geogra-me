@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Dropdown, Icon, Modal, Form, TextArea } from "semantic-ui-react";
 import Autocomplete from "./autocomplete";
-import {isNewiPhone} from "./fluid_map_profile";
+import {isMobile} from 'react-device-detect';
 
 const PIN_LIST_OPTIONS = [
   {
@@ -219,7 +219,7 @@ const AddPinContainer = props => {
         <div
           style={{
             position: 'absolute',
-            bottom: isNewiPhone() ? '75px' : '8px',
+            bottom: isMobile ? '75px' : '8px',
             right: '8px',
             zIndex: 100,
             maxWidth: '25%'
