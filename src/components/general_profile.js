@@ -3,11 +3,7 @@ import {db} from './../fire-config'
 import { USERS_COLLECTION } from './../utils'
 import ErrorMessage from "./error_message";
 import {Link, withRouter} from "react-router-dom";
-// import {GOOGLE_MAP_URL} from './../utils';
-// import Header from "./header";
 import LoadingPage from "./loading_page";
-// import MyMapComponent from "./map_component";
-// import TravelStatsCard from './travel_stats_card';
 import {Button, Icon} from 'semantic-ui-react';
 import BasicHeader from "./basic_header";
 import FluidMapProfile from './fluid_map_profile';
@@ -191,38 +187,6 @@ class GeneralProfile extends Component {
           setPinFilters={this.setPinFilters}
           pinFilters={this.state.pinFilters}
         />
-        // <Grid>
-        //   <Grid.Row>
-        //     <Container>
-        //       <Header
-        //         name={this.props.currentUser.displayName}
-        //         photoSrc={this.props.currentUser.photoURL}
-        //         profileName={this.state.profileName}
-        //         handleLogoutClick={this.props.handleLogoutClick}
-        //         shouldRenderMyMap={false}
-        //       />
-        //     </Container>
-        //   </Grid.Row>
-        //   <Grid.Row>
-        //     <MyMapComponent
-        //       isMarkerShown
-        //       googleMapURL={GOOGLE_MAP_URL}
-        //       loadingElement={<div style={{ height: `100%`, width: `100%` }} />}
-        //       containerElement={<div style={{ height: `60vh`, width: `100vw`, marginLeft: `calc(-50vw + 50%)`, paddingTop: `1px` }} />}
-        //       mapElement={<div style={{ height: `100%`, width: `100%` }} />}
-        //       listOfCities={this.state.placesBeen}
-        //       shouldRenderPlacesBeen
-        //       mapCenter={this.state.mapCenter}
-        //       shouldRenderUpdateButtons={false}
-        //     />
-        //   </Grid.Row>
-        //   <Grid.Row centered>
-        //     <TravelStatsCard
-        //       name={`${this.state.profileName}'s`}
-        //       countriesBeen={this.state.countriesBeen}
-        //     />
-        //   </Grid.Row>
-        // </Grid>
       )
     }
   };
