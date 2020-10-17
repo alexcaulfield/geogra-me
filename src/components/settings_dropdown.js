@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Dropdown,
   Button,
-  Responsive,
 } from 'semantic-ui-react';
 import {useHistory} from "react-router-dom";
 
@@ -48,13 +47,18 @@ const SettingsDropdown = ({
           </>
         )}
         {!renderPersonalProfileSettings && (
-          <Responsive maxWidth={768}>
+          <>
+            <Dropdown.Item
+              text={username}
+              icon='user outline'
+              onClick={copyToClipboard(userProfileLink)}
+            />
             <Dropdown.Item
               text='My Profile'
               icon='user outline'
               onClick={() => history.push('/profile')}
             />
-          </Responsive>
+          </>
         )}
         <Dropdown.Item
           text='Log Out'

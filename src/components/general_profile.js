@@ -46,7 +46,6 @@ class GeneralProfile extends Component {
           }
           if (data.publicProfile) {
             const newCenter = data.placesBeen.length > 0 ? data.placesBeen[0].location : _thisRef.state.mapCenter;
-            console.log(data)
             _thisRef.setState({
               profileName: data.name,
               placesBeen: data.placesBeen,
