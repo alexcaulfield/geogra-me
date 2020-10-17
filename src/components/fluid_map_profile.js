@@ -12,12 +12,12 @@ import PinFilterSelectionCard from './pin_filter_selection_card';
 
 const FluidMapProfile = props => {
   return (
-    <>
+    <div style={{position: 'relative', width: '100%'}}>
       <div
         style={{
           position: 'absolute',
-          marginLeft: '8px',
-          marginTop: '8px',
+          left: '8px',
+          top: '8px',
           zIndex: 100,
         }}
       >
@@ -30,7 +30,7 @@ const FluidMapProfile = props => {
         style={{
           position: 'absolute',
           right: '8px',
-          marginTop: '8px',
+          top: '8px',
           zIndex: 100,
         }}
       >
@@ -64,8 +64,8 @@ const FluidMapProfile = props => {
       <div
         style={{
           position: 'absolute',
-          marginLeft: '12px',
-          top: '70vh',
+          left: '8px',
+          bottom: '8px',
           width: '40vw',
           zIndex: 100,
         }}
@@ -90,7 +90,7 @@ const FluidMapProfile = props => {
           displayDateVisited={props.displayDateVisited}
         />
       )}
-    </>
+    </div>
   )
 }
 

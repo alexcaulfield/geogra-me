@@ -218,10 +218,10 @@ const AddPinContainer = props => {
         <div
           style={{
             position: 'absolute',
-            top: '75vh',
-            right: '100px',
+            bottom: '8px',
+            right: '8px',
             zIndex: 100,
-            width: '25px'
+            maxWidth: '25%'
           }}
         >
           <Button circular size='huge' color='green'>

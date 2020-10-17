@@ -171,7 +171,6 @@ class GeneralProfile extends Component {
         </>
       );
     } else if (this.state.publicProfile) {
-      console.log(this.props.currentUser)
       return (
         <FluidMapProfile
           profileName={this.state.profileName}

@@ -8,7 +8,7 @@ const App = () => (
   <div
     className="App"
   >
-    <div>
+    <div style={{margin: '0 auto'}}>
       <Router>
         <AppRouting />
       </Router>
