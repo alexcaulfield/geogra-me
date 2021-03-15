@@ -4,14 +4,7 @@ import {Card, Checkbox, Button} from 'semantic-ui-react';
 const PinFilterSelectionCard = props => {
   const [shouldShowFilterCheckboxes, setShouldShowFilterCheckboxes] = useState(false);
   return (
-    <div
-      style={{
-        position: 'absolute',
-        zIndex: 100,
-        marginTop: '60px',
-        marginLeft: '8px',
-      }}
-    >
+    <div>
       {!shouldShowFilterCheckboxes ? (
         <Button
           circular

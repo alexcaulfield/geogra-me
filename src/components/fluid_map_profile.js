@@ -3,13 +3,19 @@
  */
 import React from 'react';
 import MyMapComponent from './map_component';
-import {Label} from 'semantic-ui-react';
+import {Label, Icon} from 'semantic-ui-react';
 import {GOOGLE_MAP_URL} from './../utils';
 import SettingsDropdown from "./settings_dropdown";
 import TravelStatsCard from "./travel_stats_card";
 import AddPinContainer from './add_pin_container';
 import PinFilterSelectionCard from './pin_filter_selection_card';
 import {isMobile} from 'react-device-detect';
+import styled from 'styled-components';
+
+const SettingsIcon = styled(Icon)`
+  padding-left: 8px;
+  margin: 0;
+`;
 
 const FluidMapProfile = props => {
   return (
@@ -22,10 +28,21 @@ const FluidMapProfile = props => {
           zIndex: 100,
         }}
       >
-        <Label image size='huge' color='blue'>
-          {props.profilePhotoSrc && <img alt={props.profileName} src={props.profilePhotoSrc} />}
-          {props.shouldRenderMyMap ? 'My Map' : `${props.profileName}`}
-        </Label>
+        <SettingsDropdown
+          settingsTrigger={
+            <Label image size='huge' color='blue'>
+              {props.profilePhotoSrc && <img alt={props.profileName} src={props.profilePhotoSrc} />}
+              {props.shouldRenderMyMap ? 'My Map' : `${props.profileName}`}
+              <SettingsIcon name='setting' />
+            </Label>
+          }
+          handleLogoutClick={props.handleLogoutClick}
+          publicProfile={props.publicProfile}
+          onClickUpdateProfilePrivacy={props.onClickUpdateProfilePrivacy}
+          userProfileLink={props.userProfileLink}
+          username={props.username}
+          renderPersonalProfileSettings={props.shouldRenderMyMap}
+        />
       </div>
       <div
         style={{
@@ -35,19 +52,11 @@ const FluidMapProfile = props => {
           zIndex: 100,
         }}
       >
-        <SettingsDropdown
-          handleLogoutClick={props.handleLogoutClick}
-          publicProfile={props.publicProfile}
-          onClickUpdateProfilePrivacy={props.onClickUpdateProfilePrivacy}
-          userProfileLink={props.userProfileLink}
-          username={props.username}
-          renderPersonalProfileSettings={props.shouldRenderMyMap}
+        <PinFilterSelectionCard
+          setPinFilters={props.setPinFilters}
+          pinFilters={props.pinFilters}
         />
       </div>
-      <PinFilterSelectionCard
-        setPinFilters={props.setPinFilters}
-        pinFilters={props.pinFilters}
-      />
       <MyMapComponent
         isMarkerShown
         googleMapURL={GOOGLE_MAP_URL}
