@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {Marker, InfoWindow} from "react-google-maps"
-import { Card, Button, Image, Label } from 'semantic-ui-react'
+import InfoWindowCard from './info_window_card';
 
 const PIN_URLS = {
   'Been To': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
@@ -18,46 +18,6 @@ const splitCity = fullName => {
   }
   return [fullName, '']
 }
-
-const InfoWindowCard = ({city, country, deletePlace, cityObj, imgUrl, isPlaceToGo, isPlaceBeen, moveToPlacesBeen, setIsOpen, shouldRenderUpdateButtons}) => (
-  <Card>
-    <Card.Content>
-      <Card.Header>{city}</Card.Header>
-      {!!country && <Card.Meta>{country}</Card.Meta>}
-      <Card.Description style={{paddingBottom: '10px'}}>
-        {!!imgUrl && (
-          <Image src={imgUrl} wrapped rounded size='medium' />
-        )}
-        {!!cityObj.label && (
-          <Label>
-            {cityObj.label}
-          </Label>
-        )}
-        {!!cityObj.monthVisited && !!cityObj.yearVisited && (
-          <Label>
-            {cityObj.monthVisited} {cityObj.yearVisited}
-          </Label>
-        )}
-        {!!cityObj.comment && (
-          <p>{cityObj.comment}</p>
-        )}
-      </Card.Description>
-      {shouldRenderUpdateButtons &&
-        <Card.Content extra>
-          <div style={{paddingBottom: '10px'}}>
-            <Button content='Delete this place' icon='delete' onClick={() => {
-              deletePlace(cityObj, isPlaceToGo, isPlaceBeen)
-              setIsOpen(false)
-            }} />
-          </div>
-          {isPlaceToGo && (
-            <Button content="I've been to this place!" icon='check' onClick={() => moveToPlacesBeen(cityObj, isPlaceToGo, isPlaceBeen)} />
-          )}
-        </Card.Content>
-      }
-    </Card.Content>
-  </Card>
-);
 
 const MapInfoWindowComponent = ({city, deletePlace, shouldRenderPlacesBeen, shouldRenderPlacesToGo, moveToPlacesBeen, shouldRenderUpdateButtons}) => {
   const [isOpen, setIsOpen] = useState(false);
