@@ -74,8 +74,8 @@ const MapInfoWindowComponent = ({city, deletePlace, shouldRenderPlacesBeen, shou
             deletePlace={deletePlace}
             cityObj={city}
             imgUrl={locationImageUrl}
-            isPlaceToGo={shouldRenderPlacesToGo}
-            isPlaceBeen={shouldRenderPlacesBeen}
+            isPlaceToGo={city.label === 'Want To Go'}
+            isPlaceBeen={city.label === 'Been To'}
             moveToPlacesBeen={moveToPlacesBeen}
             setIsOpen={setIsOpen}
             shouldRenderUpdateButtons={shouldRenderUpdateButtons}

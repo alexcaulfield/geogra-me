@@ -1,5 +1,12 @@
 import React from 'react';
-import { Card, Button, Image, Label } from 'semantic-ui-react';
+import { 
+  Card, 
+  Button, 
+  Image, 
+  Label, 
+  Rating, 
+  Placeholder 
+} from 'semantic-ui-react';
 import styled from 'styled-components';
 
 const CardDescription = styled(Card.Description)`
@@ -22,6 +29,10 @@ const Comment = styled.p`
   border: 1px solid #e0e1e2;
   border-radius: 5px;
   padding: 6px;
+`;
+
+const Ratings = styled(Rating)`
+  padding-bottom: 10px;
 `;
 
 const InfoWindowCard = ({
@@ -57,6 +68,9 @@ const InfoWindowCard = ({
             {cityObj.monthVisited} {cityObj.yearVisited}
             </Label>
           </StyledLabelWrapper>
+        )}
+        {isPlaceBeen && (
+          <Ratings icon='star' defaultRating={0} maxRating={5} />
         )}
         {!!cityObj.comment && (
           <Comment>{cityObj.comment}</Comment>
