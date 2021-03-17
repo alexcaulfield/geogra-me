@@ -70,11 +70,21 @@ const InfoWindowCard = ({
           </StyledLabelWrapper>
         )}
         {isPlaceBeen && (
-          <Ratings 
-            defaultRating={cityObj.rating ? cityObj.rating : 0} 
-            maxRating={5}
-            onRate={setPlaceRating}
-          />
+          <>
+            <Ratings 
+              rating={cityObj.rating ? cityObj.rating : 0} 
+              maxRating={5}
+              onRate={setPlaceRating}
+            />
+            {cityObj.rating > 0 && (
+              <Button 
+                icon='close' 
+                basic 
+                size='small' 
+                onClick={(e, value) => setPlaceRating(e, {...value, rating: 0})}
+              />
+            )}
+          </>
         )}
         {!!cityObj.comment && (
           <Comment>{cityObj.comment}</Comment>
