@@ -32,6 +32,8 @@ const MapInfoWindowComponent = ({
   const [isOpen, setIsOpen] = useState(false);
   const [cityName, country] = splitCity(city.name);
   const [locationImageUrl, setLocationImageUrl] = useState('');
+  const [editingComment, setEditingComment] = useState(false);
+  const [placeComment, setPlaceComment] = useState(city.comment);
 
   const findPlaceImage = (service, placeId) => {
     service.getDetails({
@@ -113,6 +115,10 @@ const MapInfoWindowComponent = ({
             setIsOpen={setIsOpen}
             shouldRenderUpdateButtons={shouldRenderUpdateButtons}
             setPlaceRating={setPlaceRating}
+            editingComment={editingComment}
+            setEditingComment={setEditingComment}
+            placeComment={placeComment}
+            setPlaceComment={setPlaceComment}
           />
         </InfoWindow>
       )}
