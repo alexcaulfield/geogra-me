@@ -26,10 +26,10 @@ const MyMapComponent = withScriptjs(withGoogleMap((props) =>
         <MapInfoWindowComponent
           city={city}
           deletePlace={props.deletePlace}
-          shouldRenderPlacesBeen={props.shouldRenderPlacesBeen}
-          shouldRenderPlacesToGo={props.shouldRenderPlacesToGo}
           moveToPlacesBeen={props.moveToPlacesBeen}
           shouldRenderUpdateButtons={props.shouldRenderUpdateButtons}
+          userId={props.userId}
+          renderMapData={props.renderMapData}
         />
         )) }
     </GoogleMap>

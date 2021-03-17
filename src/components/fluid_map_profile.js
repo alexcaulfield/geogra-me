@@ -70,6 +70,8 @@ const FluidMapProfile = props => {
         moveToPlacesBeen={props.moveToPlacesBeen}
         mapCenter={props.mapCenter}
         shouldRenderUpdateButtons={props.shouldRenderUpdateButtons}
+        userId={props.userId ? props.userId : ''}
+        renderMapData={props.renderMapData}
       />
       <div
         style={{

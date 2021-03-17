@@ -1,6 +1,9 @@
 import React, {useState} from 'react'
 import {Marker, InfoWindow} from "react-google-maps"
 import InfoWindowCard from './info_window_card';
+import {db} from './../fire-config'
+import { USERS_COLLECTION, SITE_URL } from './../utils'
+import * as firebase from 'firebase'
 
 const PIN_URLS = {
   'Been To': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
@@ -19,7 +22,14 @@ const splitCity = fullName => {
   return [fullName, '']
 }
 
-const MapInfoWindowComponent = ({city, deletePlace, shouldRenderPlacesBeen, shouldRenderPlacesToGo, moveToPlacesBeen, shouldRenderUpdateButtons}) => {
+const MapInfoWindowComponent = ({
+  city, 
+  deletePlace, 
+  moveToPlacesBeen, 
+  shouldRenderUpdateButtons,
+  userId,
+  renderMapData,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [cityName, country] = splitCity(city.name);
   const [locationImageUrl, setLocationImageUrl] = useState('');
@@ -60,6 +70,30 @@ const MapInfoWindowComponent = ({city, deletePlace, shouldRenderPlacesBeen, shou
     }
   }
 
+  const getPlaceDataFromDB = async () => {
+    const userDataRef = db.collection(USERS_COLLECTION).doc(userId);
+    const userDoc = await userDataRef.get();
+    return userDoc.exists ? userDoc.data() : {errorMessage: `there was an error in fetching data for user ${userId}`}
+  }
+
+  const updatePlaceDataInDB = (placesBeen) => {
+    db.collection(USERS_COLLECTION).doc(userId).update({
+      placesBeen: placesBeen
+    })
+      .then(() => renderMapData()) // re-render map
+  }
+
+  const setPlaceRating = async (e, { rating }) => {
+    // go into db & grab all the places
+    let {placesBeen} = await getPlaceDataFromDB();
+    // find the current place
+    const placeToRateIndex = placesBeen.findIndex(place => place.name === city.name);
+    // update the rating
+    placesBeen[placeToRateIndex] = {...placesBeen[placeToRateIndex], rating: rating}
+    // update the places array in the db
+    updatePlaceDataInDB(placesBeen);
+  }
+
   return (
     <Marker
       position={city.location}
@@ -79,6 +113,7 @@ const MapInfoWindowComponent = ({city, deletePlace, shouldRenderPlacesBeen, shou
             moveToPlacesBeen={moveToPlacesBeen}
             setIsOpen={setIsOpen}
             shouldRenderUpdateButtons={shouldRenderUpdateButtons}
+            setPlaceRating={setPlaceRating}
           />
         </InfoWindow>
       )}

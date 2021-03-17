@@ -5,7 +5,6 @@ import {
   Image, 
   Label, 
   Rating, 
-  Placeholder 
 } from 'semantic-ui-react';
 import styled from 'styled-components';
 
@@ -45,7 +44,8 @@ const InfoWindowCard = ({
   isPlaceBeen, 
   moveToPlacesBeen, 
   setIsOpen, 
-  shouldRenderUpdateButtons
+  shouldRenderUpdateButtons,
+  setPlaceRating
 }) => (
   <Card>
     <Card.Content>
@@ -70,7 +70,11 @@ const InfoWindowCard = ({
           </StyledLabelWrapper>
         )}
         {isPlaceBeen && (
-          <Ratings icon='star' defaultRating={0} maxRating={5} />
+          <Ratings 
+            defaultRating={cityObj.rating ? cityObj.rating : 0} 
+            maxRating={5}
+            onRate={setPlaceRating}
+          />
         )}
         {!!cityObj.comment && (
           <Comment>{cityObj.comment}</Comment>

@@ -386,6 +386,8 @@ class CurrentUserProfile extends Component {
          shouldRenderUpdateButtons
          setPinFilters={this.setPinFilters}
          pinFilters={this.state.pinFilters}
+         userId={this.state.userDocIdentifier}
+         renderMapData={this.renderMapData}
        />
     )
   }
