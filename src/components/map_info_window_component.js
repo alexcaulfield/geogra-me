@@ -1,6 +1,9 @@
 import React, {useState} from 'react'
 import {Marker, InfoWindow} from "react-google-maps"
-import { Card, Button, Image, Label } from 'semantic-ui-react'
+import InfoWindowCard from './info_window_card';
+import {db} from './../fire-config'
+import { USERS_COLLECTION, SITE_URL } from './../utils'
+import * as firebase from 'firebase'
 
 const PIN_URLS = {
   'Been To': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
@@ -19,47 +22,14 @@ const splitCity = fullName => {
   return [fullName, '']
 }
 
-const InfoWindowCard = ({city, country, deletePlace, cityObj, imgUrl, isPlaceToGo, isPlaceBeen, moveToPlacesBeen, setIsOpen, shouldRenderUpdateButtons}) => (
-  <Card>
-    <Card.Content>
-      <Card.Header>{city}</Card.Header>
-      {!!country && <Card.Meta>{country}</Card.Meta>}
-      <Card.Description style={{paddingBottom: '10px'}}>
-        {!!imgUrl && (
-          <Image src={imgUrl} wrapped rounded size='medium' />
-        )}
-        {!!cityObj.label && (
-          <Label>
-            {cityObj.label}
-          </Label>
-        )}
-        {!!cityObj.monthVisited && !!cityObj.yearVisited && (
-          <Label>
-            {cityObj.monthVisited} {cityObj.yearVisited}
-          </Label>
-        )}
-        {!!cityObj.comment && (
-          <p>{cityObj.comment}</p>
-        )}
-      </Card.Description>
-      {shouldRenderUpdateButtons &&
-        <Card.Content extra>
-          <div style={{paddingBottom: '10px'}}>
-            <Button content='Delete this place' icon='delete' onClick={() => {
-              deletePlace(cityObj, isPlaceToGo, isPlaceBeen)
-              setIsOpen(false)
-            }} />
-          </div>
-          {isPlaceToGo && (
-            <Button content="I've been to this place!" icon='check' onClick={() => moveToPlacesBeen(cityObj, isPlaceToGo, isPlaceBeen)} />
-          )}
-        </Card.Content>
-      }
-    </Card.Content>
-  </Card>
-);
-
-const MapInfoWindowComponent = ({city, deletePlace, shouldRenderPlacesBeen, shouldRenderPlacesToGo, moveToPlacesBeen, shouldRenderUpdateButtons}) => {
+const MapInfoWindowComponent = ({
+  city, 
+  deletePlace, 
+  moveToPlacesBeen, 
+  shouldRenderUpdateButtons,
+  userId,
+  renderMapData,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [cityName, country] = splitCity(city.name);
   const [locationImageUrl, setLocationImageUrl] = useState('');
@@ -100,6 +70,30 @@ const MapInfoWindowComponent = ({city, deletePlace, shouldRenderPlacesBeen, shou
     }
   }
 
+  const getPlaceDataFromDB = async () => {
+    const userDataRef = db.collection(USERS_COLLECTION).doc(userId);
+    const userDoc = await userDataRef.get();
+    return userDoc.exists ? userDoc.data() : {errorMessage: `there was an error in fetching data for user ${userId}`}
+  }
+
+  const updatePlaceDataInDB = (placesBeen) => {
+    db.collection(USERS_COLLECTION).doc(userId).update({
+      placesBeen: placesBeen
+    })
+      .then(() => renderMapData()) // re-render map
+  }
+
+  const setPlaceRating = async (e, { rating }) => {
+    // go into db & grab all the places
+    let {placesBeen} = await getPlaceDataFromDB();
+    // find the current place
+    const placeToRateIndex = placesBeen.findIndex(place => place.name === city.name);
+    // update the rating
+    placesBeen[placeToRateIndex] = {...placesBeen[placeToRateIndex], rating: rating}
+    // update the places array in the db
+    updatePlaceDataInDB(placesBeen);
+  }
+
   return (
     <Marker
       position={city.location}
@@ -114,11 +108,12 @@ const MapInfoWindowComponent = ({city, deletePlace, shouldRenderPlacesBeen, shou
             deletePlace={deletePlace}
             cityObj={city}
             imgUrl={locationImageUrl}
-            isPlaceToGo={shouldRenderPlacesToGo}
-            isPlaceBeen={shouldRenderPlacesBeen}
+            isPlaceToGo={city.label === 'Want To Go'}
+            isPlaceBeen={city.label === 'Been To'}
             moveToPlacesBeen={moveToPlacesBeen}
             setIsOpen={setIsOpen}
             shouldRenderUpdateButtons={shouldRenderUpdateButtons}
+            setPlaceRating={setPlaceRating}
           />
         </InfoWindow>
       )}

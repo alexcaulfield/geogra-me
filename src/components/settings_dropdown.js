@@ -1,17 +1,15 @@
 import React from 'react';
 import {
   Dropdown,
-  Button,
 } from 'semantic-ui-react';
 import {useHistory} from "react-router-dom";
-
-const settingsButton = <Button circular icon='setting' size='huge' color='blue'/>;
 
 const copyToClipboard = (userProfileLink) => {
   navigator.clipboard.writeText(userProfileLink)
 };
 
 const SettingsDropdown = ({
+  settingsTrigger,
   handleLogoutClick,
   publicProfile,
   onClickUpdateProfilePrivacy,
@@ -22,8 +20,8 @@ const SettingsDropdown = ({
   const history = useHistory();
   return (
     <Dropdown
-      trigger={settingsButton}
-      pointing='top right'
+      trigger={settingsTrigger}
+      pointing='top left'
       icon={null}
     >
       <Dropdown.Menu>
