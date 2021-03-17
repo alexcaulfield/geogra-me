@@ -2,8 +2,7 @@ import React, {useState} from 'react'
 import {Marker, InfoWindow} from "react-google-maps"
 import InfoWindowCard from './info_window_card';
 import {db} from './../fire-config'
-import { USERS_COLLECTION, SITE_URL } from './../utils'
-import * as firebase from 'firebase'
+import { USERS_COLLECTION } from './../utils'
 
 const PIN_URLS = {
   'Been To': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
