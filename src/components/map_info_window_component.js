@@ -77,9 +77,16 @@ const MapInfoWindowComponent = ({
     return userDoc.exists ? userDoc.data() : {errorMessage: `there was an error in fetching data for user ${userId}`}
   }
 
-  const updatePlaceDataInDB = (placesBeen) => {
+  const updatePlacesBeenDataInDB = (placesBeen) => {
     db.collection(USERS_COLLECTION).doc(userId).update({
       placesBeen: placesBeen
+    })
+      .then(() => renderMapData()) // re-render map
+  }
+
+  const updatePlacesToGoDataInDB = (placesToGo) => {
+    db.collection(USERS_COLLECTION).doc(userId).update({
+      placesToGo: placesToGo
     })
       .then(() => renderMapData()) // re-render map
   }
@@ -92,7 +99,15 @@ const MapInfoWindowComponent = ({
     // update the rating
     placesBeen[placeToRateIndex] = {...placesBeen[placeToRateIndex], rating: rating}
     // update the places array in the db
-    updatePlaceDataInDB(placesBeen);
+    updatePlacesBeenDataInDB(placesBeen);
+  }
+
+  const savePlaceComment = async () => {
+    let {placesToGo} = await getPlaceDataFromDB();
+    const placeToUpdateCommentIndex = placesToGo.findIndex(place => place.name === city.name);
+    placesToGo[placeToUpdateCommentIndex] = {...placesToGo[placeToUpdateCommentIndex], comment: placeComment}
+    setEditingComment(false);
+    updatePlacesToGoDataInDB(placesToGo);
   }
 
   return (
@@ -119,6 +134,7 @@ const MapInfoWindowComponent = ({
             setEditingComment={setEditingComment}
             placeComment={placeComment}
             setPlaceComment={setPlaceComment}
+            savePlaceComment={savePlaceComment}
           />
         </InfoWindow>
       )}

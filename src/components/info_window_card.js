@@ -57,6 +57,7 @@ const InfoWindowCard = ({
   setEditingComment,
   placeComment,
   setPlaceComment,
+  savePlaceComment,
 }) => (
   <Card>
     <Card.Content>
@@ -100,19 +101,29 @@ const InfoWindowCard = ({
         {!!cityObj.comment && (
           <>
             {editingComment ? (
-              <TextArea 
-                value={placeComment} 
-                onChange={(e, data) => setPlaceComment(data.value)}
-              />
+              <>
+                <TextArea 
+                  value={placeComment} 
+                  onChange={(e, data) => setPlaceComment(data.value)}
+                />
+                <Button 
+                  icon='check' 
+                  basic 
+                  size='small' 
+                  onClick={() => savePlaceComment()}
+                />
+              </>
             ) : (
-              <Comment>{placeComment}</Comment>
+              <>
+                <Comment>{placeComment}</Comment>
+                <Button 
+                  icon='pencil' 
+                  basic 
+                  size='small' 
+                  onClick={() => setEditingComment(true)}
+                />
+              </>
             )}
-            <Button 
-              icon='pencil' 
-              basic 
-              size='small' 
-              onClick={() => setEditingComment(true)}
-            />
           </>
         )}
       </CardDescription>
