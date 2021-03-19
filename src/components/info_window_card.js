@@ -4,7 +4,8 @@ import {
   Button, 
   Image, 
   Label, 
-  Rating, 
+  Rating,
+  TextArea 
 } from 'semantic-ui-react';
 import styled from 'styled-components';
 
@@ -13,7 +14,11 @@ const CardDescription = styled(Card.Description)`
 `;
 
 const DeleteButton = styled(Button)`
-  padding-bottom: 10px;
+  margin-bottom: 10px;
+`;
+
+const BeenThereButton = styled(Button)`
+  margin-top: 10px;
 `;
 
 const Img = styled(Image)`
@@ -28,6 +33,8 @@ const Comment = styled.p`
   border: 1px solid #e0e1e2;
   border-radius: 5px;
   padding: 6px;
+  width: 85%;
+  display: inline-block;
 `;
 
 const Ratings = styled(Rating)`
@@ -45,7 +52,12 @@ const InfoWindowCard = ({
   moveToPlacesBeen, 
   setIsOpen, 
   shouldRenderUpdateButtons,
-  setPlaceRating
+  setPlaceRating,
+  editingComment,
+  setEditingComment,
+  placeComment,
+  setPlaceComment,
+  savePlaceComment,
 }) => (
   <Card>
     <Card.Content>
@@ -86,25 +98,54 @@ const InfoWindowCard = ({
             )}
           </>
         )}
-        {!!cityObj.comment && (
-          <Comment>{cityObj.comment}</Comment>
+        {!!placeComment && (
+          <>
+            {editingComment ? (
+              <>
+                <TextArea 
+                  value={placeComment} 
+                  onChange={(e, data) => setPlaceComment(data.value)}
+                />
+                <Button 
+                  icon='check' 
+                  basic 
+                  size='small' 
+                  onClick={() => savePlaceComment()}
+                />
+              </>
+            ) : (
+              <>
+                <Comment>{placeComment}</Comment>
+                {isPlaceToGo && (
+                  <Button 
+                    icon='pencil' 
+                    basic 
+                    size='small' 
+                    onClick={() => setEditingComment(true)}
+                  />
+                )}
+              </>
+            )}
+          </>
         )}
       </CardDescription>
       {shouldRenderUpdateButtons &&
         <Card.Content extra>
-          <DeleteButton 
-            content='Delete this place' 
-            icon='delete' 
-            onClick={() => {
-              deletePlace(cityObj, isPlaceToGo, isPlaceBeen)
-              setIsOpen(false)
-            }} 
-          />
+          <StyledLabelWrapper>
+            <DeleteButton 
+              content='Delete this place' 
+              icon='delete' 
+              onClick={() => {
+                deletePlace(cityObj, isPlaceToGo, isPlaceBeen)
+                setIsOpen(false)
+              }} 
+            />
+          </StyledLabelWrapper>
           {isPlaceToGo && (
-            <Button 
+            <BeenThereButton 
               content="I've been to this place!" 
               icon='check' 
-              onClick={() => moveToPlacesBeen(cityObj, isPlaceToGo, isPlaceBeen)} 
+              onClick={() => moveToPlacesBeen(cityObj, isPlaceToGo, isPlaceBeen)}
             />
           )}
         </Card.Content>
