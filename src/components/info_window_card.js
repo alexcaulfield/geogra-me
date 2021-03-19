@@ -98,7 +98,7 @@ const InfoWindowCard = ({
             )}
           </>
         )}
-        {!!cityObj.comment && (
+        {!!placeComment && (
           <>
             {editingComment ? (
               <>
