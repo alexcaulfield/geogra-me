@@ -33,7 +33,7 @@ const MapInfoWindowComponent = ({
   const [cityName, country] = splitCity(city.name);
   const [locationImageUrl, setLocationImageUrl] = useState('');
   const [editingComment, setEditingComment] = useState(false);
-  const [placeComment, setPlaceComment] = useState(city.comment);
+  const [placeComment, setPlaceComment] = useState(city.comment ? city.comment : '');
 
   const findPlaceImage = (service, placeId) => {
     service.getDetails({

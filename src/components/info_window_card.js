@@ -116,12 +116,14 @@ const InfoWindowCard = ({
             ) : (
               <>
                 <Comment>{placeComment}</Comment>
-                <Button 
-                  icon='pencil' 
-                  basic 
-                  size='small' 
-                  onClick={() => setEditingComment(true)}
-                />
+                {isPlaceToGo && (
+                  <Button 
+                    icon='pencil' 
+                    basic 
+                    size='small' 
+                    onClick={() => setEditingComment(true)}
+                  />
+                )}
               </>
             )}
           </>
