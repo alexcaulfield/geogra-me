@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react'
+import React from 'react'
 import { Dropdown } from 'semantic-ui-react';
 import useAddressPredictions from "../hooks/useAddressPredictions";
 
@@ -7,14 +7,6 @@ const Autocomplete = ({
   onChange,
   onSearchChange,
 }) => {
-  const inputElement = useRef(null);
-
-  useEffect(() => {
-    inputElement.current.onfocus = () => {
-      window.scrollTo(0, 0);
-      document.body.scrollTop = 0;
-    };
-  });
 
   const predictions = useAddressPredictions(value);
   return (
@@ -34,7 +26,6 @@ const Autocomplete = ({
         value={value}
         clearable
         deburr
-        ref={inputElement}
       />
     </div>
   )
