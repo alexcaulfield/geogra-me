@@ -3,7 +3,7 @@
  * https://sebastiandedeyne.com/writing-a-custom-react-hook-google-places-autocomplete/
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { debounce } from "lodash";
 
 export default function useAddressPredictions(input) {
@@ -16,25 +16,26 @@ export default function useAddressPredictions(input) {
       new window.google.maps.places.AutocompleteService();
   }
 
-  function getPlacePredictions(input) {
-    autocomplete.current.getPlacePredictions(
-      { input },
-      predictions => {
-        setPredictions(
-          predictions.map(prediction => {
-            return {
-              key: prediction.id,
-              value: prediction.description,
-              text: prediction.description,
+  const debouncedGetPlacePredictions = useMemo(
+    () =>
+      debounce(input => {
+        autocomplete.current.getPlacePredictions(
+          { input },
+          predictions => {
+            if (predictions) {
+              setPredictions(
+                predictions.map(prediction => {
+                  return {
+                    key: prediction.id,
+                    value: prediction.description,
+                    text: prediction.description,
+                  };
+                })
+              );
             }
-          })
+          }
         );
-      }
-    );
-  }
-
-  const debouncedGetPlacePredictions = useCallback(
-    debounce(getPlacePredictions, 500),
+      }, 500),
     []
   );
 
