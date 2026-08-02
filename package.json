@@ -2,6 +2,9 @@
   "name": "geogra-me",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "@emotion/core": "^10.0.21",
     "@emotion/styled": "^10.0.17",
