@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {db, fireApp} from "../fire-config";
-import * as firebase from "firebase";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
 import {USERS_COLLECTION} from "../utils";
 import LoadingPage from "./loading_page";
 import LoginPage from "./login";

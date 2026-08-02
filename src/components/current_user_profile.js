@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import {db} from './../fire-config'
 import { USERS_COLLECTION, SITE_URL } from './../utils'
 import {geocodeByAddress, getLatLng} from 'react-places-autocomplete'
-import * as firebase from 'firebase'
+import firebase from 'firebase/compat/app'
+import 'firebase/compat/firestore'
 import FluidMapProfile from './fluid_map_profile';
 
 class CurrentUserProfile extends Component {
