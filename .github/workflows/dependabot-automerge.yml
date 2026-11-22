@@ -1,0 +1,48 @@
+name: Dependabot Auto-Merge
+
+on:
+  pull_request_target:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  dependabot-automerge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Wait for Vercel deploy preview and merge
+        if: >-
+          steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
+          steps.metadata.outputs.update-type == 'version-update:semver-patch'
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Wait up to 2 minutes for Vercel to register its check on the PR
+          for i in $(seq 1 12); do
+            if (gh pr checks "$PR_URL" 2>/dev/null || true) | grep -qi "vercel"; then
+              break
+            fi
+            sleep 10
+          done
+
+          # Wait for Vercel (and any other PR checks) to pass
+          gh pr checks "$PR_URL" --watch --interval 15
+
+          # Merge directly once checks pass
+          gh pr merge --squash --delete-branch "$PR_URL"
