@@ -169,7 +169,6 @@ geogra-me/
 |---|---|---|
 | Missing `.env.example` template | 🟢 Low | `.env` is properly gitignored, but there is no template file documenting required keys for new setups. |
 | `NODE_OPTIONS=--openssl-legacy-provider` | 🟡 Medium | Required because CRA + Webpack 4 is incompatible with OpenSSL 3 (Node 17+). Resolved by migrating to Vite. |
-| `public/_redirects` | 🟢 Low | Stale Netlify artifact; `vercel.json` handles SPA routing. Safe to delete. |
 | `header.js` / `footer.js` | 🟢 Low | Unused components — dead code, can be removed. |
 | Emotion dependency | 🟢 Low | Appears unused alongside styled-components. Can audit and remove. |
 
@@ -181,11 +180,9 @@ Deferred: React 16 → 18/19, `react-google-maps` → `@vis.gl/react-google-maps
 
 | Priority | Item | Why | Effort |
 |---|---|---|---|
-| 🔴 **High** | Node 20 → 22 LTS | Node 20 EOL April 2026. Update `.nvmrc`, Vercel runtime, and CI. | Low |
 | 🟡 **Medium** | CRA → Vite | CRA is unmaintained; Vite resolves the OpenSSL workaround, is significantly faster, and aligns with the ecosystem. | Medium |
 | 🟡 **Medium** | Firebase compat → Modular v9+ SDK | Tree-shaking support, smaller bundle, official migration path. | Medium |
 | 🟢 **Low** | Add `.env.example` template | Documents required environment variables for local development without exposing keys. | Low |
-| 🟢 **Low** | Delete `public/_redirects` | Dead Netlify file; `vercel.json` already handles SPA routing. | Trivial |
 | 🟢 **Low** | Remove unused code | `header.js`, `footer.js`, Emotion dependency. | Low |
 | ⚪ **Deferred** | React 16 → 18/19 | Breaking changes in class components + third-party libs. Revisit after Vite migration. | High |
 | ⚪ **Deferred** | `react-google-maps` → `@vis.gl/react-google-maps` | Archived library but functional; migration is a full rewrite of map layer. | High |
